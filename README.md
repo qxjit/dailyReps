@@ -1,1 +1,1 @@
-# dailyReps
+# daily-reps
