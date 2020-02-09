@@ -1,0 +1,33 @@
+
+{--
+   Control.Applicative.Free
+
+   - Red / Black tagging type w/ contructors Functor instance
+   - ban function
+   - use liftAp to build taggedPlus
+   - use runAp to implement runBanned
+   - use runAp_ to implement tags
+   - use iterAp to implement runIter
+   - use hoistAp / retractAp to implement runBanned2
+--}
+
+
+{--
+  DSL Encoding
+  (completely different meaning of tagged!)
+
+  Define regular ADT for TaglessInitial encoding of
+  String concat / Int addition
+
+  Define result type and evalTaggedInitial
+
+  Use GADT to define TaglessInitial encoding
+  Define evalTaglessInitial
+
+  Define typeclass for final encoding of string and int operations
+  Define a newtype to implement those classes
+  implement Eval for that newtype
+
+  Demonstrate an int and string expression
+--}
+
