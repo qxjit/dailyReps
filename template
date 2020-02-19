@@ -1,3 +1,19 @@
+{--
+  Data.Ord / Sorting lists
+
+  - define an enum for player rank and build a manual Ord instance for it
+  - sort a list of ranks into ascending order
+  - sort a list of ranks into descinding ordering using Ord.Down
+  - define a Player record with name and rank
+      - Sort a list of players alphabetically using sortBy / comparing
+      - Sort a list of players by rank using sortOn
+  - Build a compare function for players that compares by name and then rank
+      - Hint: use Ord.comparing to compare the fields
+      - build one that is fully explicit
+      - Then build one that uses the Ordering Semigroup
+      - Then build one that uses the Ordering Semigroup and the (->) Semigroup
+
+--}
 
 {--
    Control.Applicative.Free
