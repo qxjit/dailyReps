@@ -42,53 +42,78 @@ Ordering, Maybe and Function.
 - implement Monoid for your multiplication newtype from above
 
 --}
+module Reps20200301 where
 
-{--
-  Data.Ord / Sorting lists
+combineList1 :: [a] -> [a] -> [a]
+combineList1 firstPart secondPart =
+  case firstPart of
+    [] ->
+      secondPart
 
-  - define an enum for player rank and build a manual Ord instance for it
-  - sort a list of ranks into ascending order
-  - sort a list of ranks into descinding ordering using Ord.Down
-  - define a Player record with name and rank
-      - Sort a list of players alphabetically using sortBy / comparing
-      - Sort a list of players by rank using sortOn
-  - Build a compare function for players that compares by name and then rank
-      - Hint: use Ord.comparing to compare the fields
-      - build one that is fully explicit
-      - Then build one that uses the Ordering Semigroup
-      - Then build one that uses the Ordering Semigroup and the (->) Semigroup
+    (item:rest) ->
+      item : combineList1 rest secondPart
 
---}
+combineList2 :: [a] -> [a] -> [a]
+combineList2 =
+  (++)
 
-{--
-   Control.Applicative.Free
+combineMaybe :: Semigroup a => Maybe a -> Maybe a -> Maybe a
+combineMaybe left right =
+  case (left, right) of
+    (Nothing, anything) ->
+      anything
 
-   - Red / Black tagging type w/ contructors Functor instance
-   - ban function
-   - use liftAp to build taggedPlus
-   - use runAp to implement runBanned
-   - use runAp_ to implement tags
-   - use iterAp to implement runIter
-   - use hoistAp / retractAp to implement runBanned2
---}
+    (anything, Nothing) ->
+      anything
 
+    (Just someLeft, Just someRight) ->
+      Just (someLeft <> someRight)
 
-{--
-  DSL Encoding
-  (completely different meaning of tagged!)
+combineOrdering :: Ordering -> Ordering -> Ordering
+combineOrdering first second =
+  case first of
+    LT -> first
+    GT -> first
+    EQ -> second
 
-  Define regular ADT for TaglessInitial encoding of
-  String concat / Int addition
+combineFunction :: Semigroup b => (a -> b) -> (a -> b) -> a -> b
+combineFunction left right a =
+  left a <> right a
 
-  Define result type and evalTaggedInitial
+newtype Addition =
+  Addition
+    { getAddition :: Int
+    }
 
-  Use GADT to define TaglessInitial encoding
-  Define evalTaglessInitial
+instance Semigroup Addition where
+  left <> right =
+    Addition (getAddition left + getAddition right)
 
-  Define typeclass for final encoding of string and int operations
-  Define a newtype to implement those classes
-  implement Eval for that newtype
+newtype Multiplication =
+  Multiplication
+    { getMultiplication :: Int
+    }
 
-  Demonstrate an int and string expression
---}
+instance Semigroup Multiplication where
+  left <> right =
+    Multiplication (getMultiplication left * getMultiplication right)
+
+memptyList :: [a]
+memptyList = []
+
+memptyMaybe :: Maybe a
+memptyMaybe = Nothing
+
+memptyOrdering :: Ordering
+memptyOrdering = EQ
+
+memptyFunction :: Monoid b => a -> b
+memptyFunction _ = mempty
+
+instance Monoid Addition where
+  mempty = Addition 0
+
+instance Monoid Multiplication where
+  mempty = Multiplication 1
+
 
