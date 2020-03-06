@@ -1,7 +1,7 @@
-module Reps20200221 where
+module Year2020.Month02.Day25 where
 
-import qualified Control.Applicative.Free as AF
-import qualified Control.Monad as CM
+import qualified Control.Applicative.Free as FreeAp
+import qualified Control.Monad as Monad
 import qualified Data.List as List
 import qualified Data.Ord as Ord
 import qualified Data.Set as Set
@@ -27,24 +27,22 @@ data Rank
   = Gold
   | Silver
   | Bronze
-  | Coal
-  deriving (Eq, Show)
+  deriving (Show, Eq)
 
 instance Ord Rank where
   compare left right =
     case (left, right) of
-      (Gold   , Gold  ) -> EQ
-      (Silver , Silver) -> EQ
-      (Bronze , Bronze) -> EQ
-      (Coal   , Coal  ) -> EQ
-      (Gold   , _     ) -> GT
-      (Silver , _     ) -> GT
-      (Bronze , _     ) -> GT
-      (Coal   , _     ) -> LT
+      (Gold, Gold) -> EQ
+      (Silver, Silver) -> EQ
+      (Bronze, Bronze) -> EQ
+      (Gold, _) -> GT
+      (_, Gold) -> LT
+      (Silver, _) -> GT
+      (_, Silver) -> LT
 
 ranks :: [Rank]
 ranks =
-  [ Bronze, Coal, Gold, Silver, Bronze, Gold, Silver, Coal ]
+  [Gold, Bronze, Silver, Gold, Bronze]
 
 ascendingRanks :: [Rank]
 ascendingRanks =
@@ -58,14 +56,13 @@ data Player =
   Player
     { playerName :: String
     , playerRank :: Rank
-    }
+    } deriving (Eq, Show)
 
 players :: [Player]
 players =
-  [ Player "Cheryl" Gold
-  , Player "Santa" Coal
-  , Player "Sasha" Silver
-  , Player "Anthony" Bronze
+  [ Player "Sam" Bronze
+  , Player "Zelda" Gold
+  , Player "Abe" Silver
   ]
 
 alphabeticalPlayers :: [Player]
@@ -85,12 +82,12 @@ comparePlayers1 left right =
 
 comparePlayers2 :: Player -> Player -> Ordering
 comparePlayers2 left right =
-  Ord.comparing playerRank left right
-  <> Ord.comparing playerName left right
+  Ord.comparing playerRank left right <> Ord.comparing playerName left right
 
 comparePlayers3 :: Player -> Player -> Ordering
 comparePlayers3 =
   Ord.comparing playerRank <> Ord.comparing playerName
+
 
 {--
    Control.Applicative.Free
@@ -111,7 +108,6 @@ data Tag
 
 data Tagged a
   = Tagged Tag a
-  deriving (Show, Eq)
 
 instance Functor Tagged where
   fmap f (Tagged tag a) =
@@ -125,31 +121,31 @@ black = Tagged Black
 
 ban :: Tag -> Tagged a -> Maybe a
 ban bannedTag (Tagged tag a) = do
-  CM.guard (tag /= bannedTag)
+  Monad.guard (tag /= bannedTag)
   pure a
 
-taggedPlus :: Tagged Int -> Tagged Int -> AF.Ap Tagged Int
+taggedPlus :: Tagged Int -> Tagged Int -> FreeAp.Ap Tagged Int
 taggedPlus a b =
-  (+) <$> AF.liftAp a <*> AF.liftAp b
+  (+) <$> FreeAp.liftAp a <*> FreeAp.liftAp b
 
-runBanned :: Tag -> AF.Ap Tagged a -> Maybe a
+runBanned :: Tag -> FreeAp.Ap Tagged a -> Maybe a
 runBanned bannedTag =
-  AF.runAp (ban bannedTag)
+  FreeAp.runAp (ban bannedTag)
 
-tags :: AF.Ap Tagged a -> Set.Set Tag
+tags :: FreeAp.Ap Tagged a -> Set.Set Tag
 tags =
-  AF.runAp_ extractTag
+  FreeAp.runAp_ extractTag
     where
       extractTag (Tagged tag _) =
         Set.singleton tag
 
-runPlain :: AF.Ap Tagged a -> a
+runPlain :: FreeAp.Ap Tagged a -> a
 runPlain =
-  AF.iterAp extractValue
+  FreeAp.iterAp extractValue
     where
       extractValue (Tagged _ a) =
         a
 
-runBanned2 :: Tag -> AF.Ap Tagged a ->  Maybe a
+runBanned2 :: Tag -> FreeAp.Ap Tagged a -> Maybe a
 runBanned2 bannedTag =
-  AF.retractAp . AF.hoistAp (ban bannedTag)
+  FreeAp.retractAp . FreeAp.hoistAp (ban bannedTag)

@@ -1,4 +1,4 @@
-module Reps20200226 where
+module Year2020.Month02.Day28 where
 
 import qualified Control.Applicative.Free as FreeAp
 import qualified Control.Monad as Monad
@@ -34,7 +34,7 @@ instance Ord Rank where
     case (left, right) of
       (Gold, Gold) -> EQ
       (Silver, Silver) -> EQ
-      (Bronze, Bronze) -> EQ
+      (Bronze, Bronze) ->  EQ
       (Gold, _) -> GT
       (_, Gold) -> LT
       (Silver, _) -> GT
@@ -42,7 +42,7 @@ instance Ord Rank where
 
 ranks :: [Rank]
 ranks =
-  [ Silver, Bronze, Gold ]
+  [ Silver, Gold, Bronze, Gold, Silver ]
 
 ascendingRanks :: [Rank]
 ascendingRanks =
@@ -60,14 +60,16 @@ data Player =
 
 players :: [Player]
 players =
-  [ Player "Alicia" Bronze
+  [ Player "Sandra" Gold
+  , Player "Stan" Bronze
   , Player "Xavier" Silver
-  , Player "Tasha" Gold
+  , Player "Kim" Silver
   ]
 
 alphabeticalPlayers :: [Player]
 alphabeticalPlayers =
   List.sortOn playerName players
+
 
 rankedPlayers :: [Player]
 rankedPlayers =
@@ -105,8 +107,8 @@ data Tag
   | Black
   deriving (Show, Eq, Ord)
 
-data Tagged a
-  = Tagged Tag a
+data Tagged a =
+  Tagged Tag a
   deriving (Show, Eq)
 
 instance Functor Tagged where
@@ -121,7 +123,7 @@ black = Tagged Black
 
 ban :: Tag -> Tagged a -> Maybe a
 ban bannedTag (Tagged tag a) = do
-  Monad.guard (bannedTag /= tag)
+  Monad.guard (tag /= bannedTag)
   pure a
 
 taggedPlus :: Tagged Int -> Tagged Int -> FreeAp.Ap Tagged Int

@@ -42,34 +42,20 @@ Ordering, Maybe and Function.
 - implement Monoid for your multiplication newtype from above
 
 --}
-module Reps20200304 where
-
-
-{-
-  Semigroup Law: Associativity
-
-  (x <> y) <> z == x <> (y <> z)
--}
+module Year2020.Month03.Day01 where
 
 combineList1 :: [a] -> [a] -> [a]
-combineList1 front back =
-  case front of
+combineList1 firstPart secondPart =
+  case firstPart of
     [] ->
-      back
+      secondPart
 
-    (first : rest) ->
-      first : combineList1 rest back
+    (item:rest) ->
+      item : combineList1 rest secondPart
 
 combineList2 :: [a] -> [a] -> [a]
 combineList2 =
   (++)
-
-combineOrdering :: Ordering -> Ordering -> Ordering
-combineOrdering primary secondary =
-  case primary of
-    LT -> LT
-    GT -> GT
-    EQ -> secondary
 
 combineMaybe :: Semigroup a => Maybe a -> Maybe a -> Maybe a
 combineMaybe left right =
@@ -83,10 +69,16 @@ combineMaybe left right =
     (Just someLeft, Just someRight) ->
       Just (someLeft <> someRight)
 
+combineOrdering :: Ordering -> Ordering -> Ordering
+combineOrdering first second =
+  case first of
+    LT -> first
+    GT -> first
+    EQ -> second
 
 combineFunction :: Semigroup b => (a -> b) -> (a -> b) -> a -> b
-combineFunction f g a =
-  f a <> g a
+combineFunction left right a =
+  left a <> right a
 
 newtype Addition =
   Addition
@@ -95,8 +87,7 @@ newtype Addition =
 
 instance Semigroup Addition where
   left <> right =
-    Addition $
-      getAddition left + getAddition right
+    Addition (getAddition left + getAddition right)
 
 newtype Multiplication =
   Multiplication
@@ -105,35 +96,24 @@ newtype Multiplication =
 
 instance Semigroup Multiplication where
   left <> right =
-    Multiplication $
-      getMultiplication left * getMultiplication right
-
-{-
-  Monoid laws for mempty:
-    x <> mempty = x
-    mempty <> x = x
--}
+    Multiplication (getMultiplication left * getMultiplication right)
 
 memptyList :: [a]
-memptyList =
-  []
-
-memptyOrdering :: Ordering
-memptyOrdering =
-  EQ
+memptyList = []
 
 memptyMaybe :: Maybe a
-memptyMaybe =
-  Nothing
+memptyMaybe = Nothing
+
+memptyOrdering :: Ordering
+memptyOrdering = EQ
 
 memptyFunction :: Monoid b => a -> b
-memptyFunction _ =
-  mempty
+memptyFunction _ = mempty
 
 instance Monoid Addition where
-  mempty =
-    Addition 0
+  mempty = Addition 0
 
 instance Monoid Multiplication where
-  mempty =
-    Multiplication 1
+  mempty = Multiplication 1
+
+

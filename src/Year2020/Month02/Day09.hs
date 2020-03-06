@@ -1,5 +1,5 @@
 {-# LANGUAGE GADTs #-}
-module Reps20200209 where
+module Year2020.Month02.Day09 where
 
 import qualified Control.Applicative.Free as AF
 import qualified Control.Monad as CM

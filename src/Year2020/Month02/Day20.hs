@@ -1,7 +1,7 @@
-module Reps20200228 where
+module Year2020.Month02.Day20 where
 
-import qualified Control.Applicative.Free as FreeAp
-import qualified Control.Monad as Monad
+import qualified Control.Applicative.Free as AF
+import qualified Control.Monad as CM
 import qualified Data.List as List
 import qualified Data.Ord as Ord
 import qualified Data.Set as Set
@@ -24,25 +24,25 @@ import qualified Data.Set as Set
 --}
 
 data Rank
-  = Gold
-  | Silver
-  | Bronze
+  = First
+  | Second
+  | Third
   deriving (Show, Eq)
 
 instance Ord Rank where
   compare left right =
     case (left, right) of
-      (Gold, Gold) -> EQ
-      (Silver, Silver) -> EQ
-      (Bronze, Bronze) ->  EQ
-      (Gold, _) -> GT
-      (_, Gold) -> LT
-      (Silver, _) -> GT
-      (_, Silver) -> LT
+      (First , First ) -> EQ
+      (Second, Second) -> EQ
+      (Third , Third ) -> EQ
+      (First , _     ) -> GT
+      (_     , Third ) -> GT
+      (Third , _     ) -> LT
+      (_     , First ) -> LT
 
 ranks :: [Rank]
 ranks =
-  [ Silver, Gold, Bronze, Gold, Silver ]
+  [Third, First, Second, Third, Second, First]
 
 ascendingRanks :: [Rank]
 ascendingRanks =
@@ -56,39 +56,39 @@ data Player =
   Player
     { playerName :: String
     , playerRank :: Rank
-    } deriving (Show, Eq)
+    }
 
 players :: [Player]
 players =
-  [ Player "Sandra" Gold
-  , Player "Stan" Bronze
-  , Player "Xavier" Silver
-  , Player "Kim" Silver
+  [ Player "Bob" Third
+  , Player "Alicia" Second
+  , Player "Xavier" First
+  , Player "Zelda" Second
   ]
 
 alphabeticalPlayers :: [Player]
 alphabeticalPlayers =
-  List.sortOn playerName players
-
+  List.sortBy (Ord.comparing playerName) players
 
 rankedPlayers :: [Player]
 rankedPlayers =
-  List.sortBy (Ord.comparing playerRank) players
+  List.sortOn playerRank players
 
 comparePlayers1 :: Player -> Player -> Ordering
 comparePlayers1 left right =
-  case Ord.comparing playerRank left right of
+  case Ord.comparing playerName left right of
     LT -> LT
     GT -> GT
-    EQ -> Ord.comparing playerName left right
+    EQ -> Ord.comparing playerRank left right
 
 comparePlayers2 :: Player -> Player -> Ordering
 comparePlayers2 left right =
-  Ord.comparing playerRank left right <> Ord.comparing playerName left right
+  Ord.comparing playerName left right
+  <> Ord.comparing playerRank left right
 
 comparePlayers3 :: Player -> Player -> Ordering
 comparePlayers3 =
-  Ord.comparing playerRank <> Ord.comparing playerName
+  Ord.comparing playerName <> Ord.comparing playerRank
 
 {--
    Control.Applicative.Free
@@ -109,45 +109,46 @@ data Tag
 
 data Tagged a =
   Tagged Tag a
-  deriving (Show, Eq)
+  deriving (Show)
 
 instance Functor Tagged where
-  fmap f (Tagged tag a) =
-    Tagged tag (f a)
+  fmap f (Tagged tag a) = Tagged tag (f a)
 
 red :: a -> Tagged a
-red = Tagged Red
+red =
+  Tagged Red
 
 black :: a -> Tagged a
-black = Tagged Black
+black =
+  Tagged Black
 
 ban :: Tag -> Tagged a -> Maybe a
 ban bannedTag (Tagged tag a) = do
-  Monad.guard (tag /= bannedTag)
+  CM.guard (tag /= bannedTag)
   pure a
 
-taggedPlus :: Tagged Int -> Tagged Int -> FreeAp.Ap Tagged Int
+taggedPlus :: Tagged Int -> Tagged Int -> AF.Ap Tagged Int
 taggedPlus a b =
-  (+) <$> FreeAp.liftAp a <*> FreeAp.liftAp b
+  (+) <$> AF.liftAp a <*> AF.liftAp b
 
-runBanned :: Tag -> FreeAp.Ap Tagged a -> Maybe a
+runBanned :: Tag -> AF.Ap Tagged a -> Maybe a
 runBanned bannedTag =
-  FreeAp.runAp (ban bannedTag)
+  AF.runAp (ban bannedTag)
 
-tags :: FreeAp.Ap Tagged a -> Set.Set Tag
+tags :: AF.Ap Tagged a -> Set.Set Tag
 tags =
-  FreeAp.runAp_ extractTag
+  AF.runAp_ extractTag
     where
       extractTag (Tagged tag _) =
         Set.singleton tag
 
-runPlain :: FreeAp.Ap Tagged a -> a
+runPlain :: AF.Ap Tagged a -> a
 runPlain =
-  FreeAp.iterAp extractValue
+  AF.iterAp extractValue
     where
       extractValue (Tagged _ a) =
         a
 
-runBanned2 :: Tag -> FreeAp.Ap Tagged a -> Maybe a
+runBanned2 :: Tag -> AF.Ap Tagged a -> Maybe a
 runBanned2 bannedTag =
-  FreeAp.retractAp . FreeAp.hoistAp (ban bannedTag)
+  AF.retractAp . AF.hoistAp (ban bannedTag)

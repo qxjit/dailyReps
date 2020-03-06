@@ -1,9 +1,10 @@
 {-# LANGUAGE GADTs #-}
-module Reps20200211 where
+module Year2020.Month02.Day12 where
 
 import qualified Control.Monad as CM
 import qualified Control.Applicative.Free as AF
 import qualified Data.Set as Set
+
 
 {--
    Control.Applicative.Free
@@ -17,7 +18,7 @@ import qualified Data.Set as Set
    - use hoistAp / retractAp to implement runBanned2
 --}
 
-data Tag = Red | Black deriving (Eq, Show, Ord)
+data Tag = Red | Black deriving (Show, Eq, Ord)
 data Tagged a = Tagged Tag a
 
 instance Functor Tagged where
@@ -87,40 +88,40 @@ data Initial
   | InitInc Initial
 
 data InitialResult
-  = InitStringResult String
-  | InitIntResult Int
+  = InitResultString String
+  | InitResultInt Int
 
 evalInitial :: Initial -> Maybe InitialResult
 evalInitial expr =
   case expr of
     InitString string ->
-      pure $ InitStringResult string
+      pure $ InitResultString string
 
     InitInt int ->
-      pure $ InitIntResult int
+      pure $ InitResultInt int
 
     InitConcat exprA exprB -> do
       resultA <- evalInitial exprA
       resultB <- evalInitial exprB
 
       case (resultA, resultB) of
-        (InitStringResult stringA, InitStringResult stringB) ->
-          pure $ InitStringResult (stringA ++ stringB)
+        (InitResultString strA, InitResultString strB) ->
+          pure $ InitResultString (strA ++ strB)
 
-        _ ->
-          Nothing
+        _ -> Nothing
 
     InitInc subExpr -> do
-      subResult <- evalInitial subExpr
-      case subResult of
-        InitIntResult int ->
-          pure $ InitIntResult (int + 1)
+      result <- evalInitial subExpr
+      case result of
+        InitResultInt int ->
+          pure $ InitResultInt (int + 1)
 
         _ ->
           Nothing
 
+
 data Tagless a where
-  TaglessString :: String -> Tagless String
+  TaglessStr :: String -> Tagless String
   TaglessInt :: Int -> Tagless Int
   TaglessConcat :: Tagless String -> Tagless String -> Tagless String
   TaglessInc :: Tagless Int -> Tagless Int
@@ -128,7 +129,7 @@ data Tagless a where
 evalTagless :: Tagless a -> a
 evalTagless expr =
   case expr of
-    TaglessString string ->
+    TaglessStr string ->
       string
 
     TaglessInt int ->
@@ -137,8 +138,8 @@ evalTagless expr =
     TaglessConcat a b ->
       evalTagless a ++ evalTagless b
 
-    TaglessInc subExpr ->
-      evalTagless subExpr + 1
+    TaglessInc a ->
+      evalTagless a + 1
 
 
 class FinalStr expr where
@@ -149,32 +150,29 @@ class FinalInt expr where
   finalInt :: Int -> expr Int
   finalInc :: expr Int -> expr Int
 
-newtype FinalVal a = FinalVal a
+newtype FinalVal a = FinalVal { evalFinal :: a }
 
 instance FinalStr FinalVal where
   finalStr =
     FinalVal
 
-  finalConcat (FinalVal a) (FinalVal b) =
-    FinalVal (a ++ b)
+  finalConcat a b =
+    FinalVal (evalFinal a ++ evalFinal b)
 
 instance FinalInt FinalVal where
   finalInt =
     FinalVal
 
-  finalInc (FinalVal a) =
-    FinalVal (a + 1)
+  finalInc a =
+    FinalVal (evalFinal a + 1)
 
-evalFinal :: FinalVal a -> a
-evalFinal (FinalVal a) =
-  a
-
-aStr :: String
-aStr =
+aString :: String
+aString =
   evalFinal $
-    finalConcat (finalStr "Hello")
-                (finalConcat (finalStr " ") (finalStr "World"))
+    finalConcat (finalStr "Hello ") (finalStr "World")
+
 anInt :: Int
 anInt =
   evalFinal $
-    finalInc (finalInc (finalInc (finalInt 0)))
+    finalInc (finalInc (finalInt 3))
+

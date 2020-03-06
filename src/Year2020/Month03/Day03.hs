@@ -43,7 +43,7 @@ Ordering, Maybe and Function.
 
 --}
 
-module Reps20200303 where
+module Year2020.Month03.Day03 where
 
 {-
   Semigroup Law:

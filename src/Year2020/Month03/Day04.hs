@@ -42,12 +42,13 @@ Ordering, Maybe and Function.
 - implement Monoid for your multiplication newtype from above
 
 --}
-module Reps20200306 where
+module Year2020.Month03.Day04 where
+
 
 {-
   Semigroup Law: Associativity
 
-  (x <> y) <> z = x <> (y <> z)
+  (x <> y) <> z == x <> (y <> z)
 -}
 
 combineList1 :: [a] -> [a] -> [a]
@@ -79,8 +80,9 @@ combineMaybe left right =
     (anything, Nothing) ->
       anything
 
-    (Just someLeft, Just someRight)  ->
+    (Just someLeft, Just someRight) ->
       Just (someLeft <> someRight)
+
 
 combineFunction :: Semigroup b => (a -> b) -> (a -> b) -> a -> b
 combineFunction f g a =
@@ -127,3 +129,11 @@ memptyMaybe =
 memptyFunction :: Monoid b => a -> b
 memptyFunction _ =
   mempty
+
+instance Monoid Addition where
+  mempty =
+    Addition 0
+
+instance Monoid Multiplication where
+  mempty =
+    Multiplication 1

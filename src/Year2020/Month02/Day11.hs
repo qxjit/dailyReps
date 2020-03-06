@@ -1,8 +1,8 @@
 {-# LANGUAGE GADTs #-}
-module Reps20200210 where
+module Year2020.Month02.Day11 where
 
-import qualified Control.Applicative.Free as AF
 import qualified Control.Monad as CM
+import qualified Control.Applicative.Free as AF
 import qualified Data.Set as Set
 
 {--
@@ -17,7 +17,7 @@ import qualified Data.Set as Set
    - use hoistAp / retractAp to implement runBanned2
 --}
 
-data Tag = Red | Black deriving (Show, Eq, Ord)
+data Tag = Red | Black deriving (Eq, Show, Ord)
 data Tagged a = Tagged Tag a
 
 instance Functor Tagged where
@@ -80,51 +80,52 @@ runBanned2 bannedTag =
   Demonstrate an int and string expression
 --}
 
-data InitialExpr
+data Initial
   = InitString String
   | InitInt Int
-  | InitReverse InitialExpr
-  | InitAdd InitialExpr InitialExpr
+  | InitConcat Initial Initial
+  | InitInc Initial
 
 data InitialResult
-  = ResultString String
-  | ResultInt Int
+  = InitStringResult String
+  | InitIntResult Int
 
-evalInitial :: InitialExpr -> Maybe InitialResult
+evalInitial :: Initial -> Maybe InitialResult
 evalInitial expr =
   case expr of
     InitString string ->
-      pure (ResultString string)
+      pure $ InitStringResult string
 
     InitInt int ->
-      pure (ResultInt int)
+      pure $ InitIntResult int
 
-    InitReverse subExpr -> do
-      result <- evalInitial subExpr
-      case result of
-        ResultString string ->
-          pure (ResultString (reverse string))
-
-        _ ->
-          Nothing
-
-    InitAdd exprA exprB -> do
+    InitConcat exprA exprB -> do
       resultA <- evalInitial exprA
       resultB <- evalInitial exprB
+
       case (resultA, resultB) of
-        (ResultInt a, ResultInt b) ->
-          pure (ResultInt (a + b))
+        (InitStringResult stringA, InitStringResult stringB) ->
+          pure $ InitStringResult (stringA ++ stringB)
 
         _ ->
           Nothing
 
-data TaglessExpr a where
-  TaglessString :: String -> TaglessExpr String
-  TaglessInt :: Int -> TaglessExpr Int
-  TaglessReverse :: TaglessExpr String -> TaglessExpr String
-  TaglessAdd :: TaglessExpr Int -> TaglessExpr Int -> TaglessExpr Int
+    InitInc subExpr -> do
+      subResult <- evalInitial subExpr
+      case subResult of
+        InitIntResult int ->
+          pure $ InitIntResult (int + 1)
 
-evalTagless :: TaglessExpr a -> a
+        _ ->
+          Nothing
+
+data Tagless a where
+  TaglessString :: String -> Tagless String
+  TaglessInt :: Int -> Tagless Int
+  TaglessConcat :: Tagless String -> Tagless String -> Tagless String
+  TaglessInc :: Tagless Int -> Tagless Int
+
+evalTagless :: Tagless a -> a
 evalTagless expr =
   case expr of
     TaglessString string ->
@@ -133,48 +134,47 @@ evalTagless expr =
     TaglessInt int ->
       int
 
-    TaglessReverse subExpr ->
-      reverse (evalTagless subExpr)
+    TaglessConcat a b ->
+      evalTagless a ++ evalTagless b
 
-    TaglessAdd exprA exprB ->
-      evalTagless exprA + evalTagless exprB
+    TaglessInc subExpr ->
+      evalTagless subExpr + 1
 
 
 class FinalStr expr where
   finalStr :: String -> expr String
-  finalReverse :: expr String -> expr String
+  finalConcat :: expr String -> expr String -> expr String
 
 class FinalInt expr where
   finalInt :: Int -> expr Int
-  finalAdd :: expr Int -> expr Int -> expr Int
+  finalInc :: expr Int -> expr Int
 
-newtype FinalValue a = FinalValue a deriving Show
+newtype FinalVal a = FinalVal a
 
-instance FinalStr FinalValue where
+instance FinalStr FinalVal where
   finalStr =
-    FinalValue
+    FinalVal
 
-  finalReverse (FinalValue str) =
-    FinalValue (reverse str)
+  finalConcat (FinalVal a) (FinalVal b) =
+    FinalVal (a ++ b)
 
-instance FinalInt FinalValue where
+instance FinalInt FinalVal where
   finalInt =
-    FinalValue
+    FinalVal
 
-  finalAdd (FinalValue a) (FinalValue b) =
-    FinalValue (a + b)
+  finalInc (FinalVal a) =
+    FinalVal (a + 1)
 
-evalFinal :: FinalValue a -> a
-evalFinal (FinalValue a) = a
+evalFinal :: FinalVal a -> a
+evalFinal (FinalVal a) =
+  a
 
-aString :: String
-aString =
+aStr :: String
+aStr =
   evalFinal $
-    finalReverse (finalStr "drloW olleH")
-
+    finalConcat (finalStr "Hello")
+                (finalConcat (finalStr " ") (finalStr "World"))
 anInt :: Int
 anInt =
   evalFinal $
-    finalAdd
-      (finalAdd (finalInt 2) (finalInt 3))
-      (finalInt 10)
+    finalInc (finalInc (finalInc (finalInt 0)))

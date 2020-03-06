@@ -1,4 +1,4 @@
-module Reps20200219 where
+module Year2020.Month02.Day19 where
 
 import qualified Data.List as List
 import qualified Data.Ord as Ord

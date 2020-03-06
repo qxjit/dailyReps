@@ -1,4 +1,4 @@
-module Reps20200223 where
+module Year2020.Month02.Day24 where
 
 import qualified Control.Applicative.Free as FreeAp
 import qualified Control.Monad as Monad
@@ -24,24 +24,24 @@ import qualified Data.Set as Set
 --}
 
 data Rank
-  = Sublime
-  | Mediocre
-  | Offensive
+  = Gold
+  | Silver
+  | Bronze
   deriving (Show, Eq)
 
 instance Ord Rank where
   compare left right =
     case (left, right) of
-      (Sublime, Sublime) -> EQ
-      (Mediocre, Mediocre) -> EQ
-      (Offensive, Offensive) -> EQ
-      (Sublime, _) -> GT
-      (Mediocre, _) -> GT
-      (Offensive, _) -> LT
+      (Gold, Gold) -> EQ
+      (Silver, Silver) -> EQ
+      (Bronze, Bronze) -> EQ
+      (Gold, _) -> GT
+      (Silver, _) -> GT
+      (Bronze, _) -> LT
 
 ranks :: [Rank]
 ranks =
-  [ Mediocre, Sublime, Mediocre, Offensive, Sublime ]
+  [ Silver, Gold, Bronze, Silver, Bronze, Gold ]
 
 ascendingRanks :: [Rank]
 ascendingRanks =
@@ -55,14 +55,14 @@ data Player =
   Player
     { playerName :: String
     , playerRank :: Rank
-    }
+    } deriving (Show, Eq)
 
 players :: [Player]
 players =
-  [ Player "Anna" Sublime
-  , Player "Matt" Mediocre
-  , Player "Yolana" Offensive
-  , Player "Xavier" Sublime
+  [ Player "Bob" Gold
+  , Player "Jean" Bronze
+  , Player "Samantha" Silver
+  , Player "Zelda" Gold
   ]
 
 alphabeticalPlayers :: [Player]
@@ -82,8 +82,7 @@ comparePlayers1 left right =
 
 comparePlayers2 :: Player -> Player -> Ordering
 comparePlayers2 left right =
-  Ord.comparing playerRank left right
-  <> Ord.comparing playerName left right
+  Ord.comparing playerRank left right <> Ord.comparing playerName left right
 
 comparePlayers3 :: Player -> Player -> Ordering
 comparePlayers3 =
@@ -111,7 +110,7 @@ data Tagged a =
   deriving (Show, Eq)
 
 instance Functor Tagged where
-  fmap f (Tagged tag a) = 
+  fmap f (Tagged tag a) =
     Tagged tag (f a)
 
 red :: a -> Tagged a
@@ -150,4 +149,3 @@ runPlain =
 runBanned2 :: Tag -> FreeAp.Ap Tagged a -> Maybe a
 runBanned2 bannedTag =
   FreeAp.retractAp . FreeAp.hoistAp (ban bannedTag)
-

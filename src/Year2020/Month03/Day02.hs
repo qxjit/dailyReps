@@ -43,12 +43,9 @@ Ordering, Maybe and Function.
 
 --}
 
-module Reps20200305 where
+module Year2020.Month03.Day02 where
 
-{-
-  Semigroup Law: Associativity
-    (x <> y) <> z = x <> (y <> z)
--}
+-- Semigroup law - Associativity: (x <> y) <> z = x <> (y <> z)
 
 combineList1 :: [a] -> [a] -> [a]
 combineList1 front back =
@@ -106,11 +103,9 @@ instance Semigroup Multiplication where
     Multiplication $
       getMultiplication left * getMultiplication right
 
-{-
-  Monoid laws for mempty:
-    mempty <> x = x
-    x <> mempty = x
--}
+-- Monoid laws:
+--   mempty <> a = a
+--   a <> mempty = a
 
 memptyList :: [a]
 memptyList =

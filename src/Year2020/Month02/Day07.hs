@@ -1,4 +1,4 @@
-module Reps20200207 where
+module Year2020.Month02.Day07 where
 
 import qualified Control.Applicative.Free as AF
 
