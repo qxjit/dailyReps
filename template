@@ -9,6 +9,10 @@ Eq
     laws given in the docs for Eq that represent the general expected practice
     for implementing Eq. The laws given in the answer here are those, with
     one omission (Substitutivity), for simplicities sake.
+  - Reflexivity
+  - Symmetry
+  - Transitivity
+  - Negation
 
 - Define an enum type and provide an Eq instance for it
 - Define a record type and provide an Eq instance for it
