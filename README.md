@@ -2,6 +2,7 @@
 
 | Day | Reps | Time | Add / Remove / Change |
 |-|-|-|-|
+| 2020-03-31 (Tue) | 24 | ~10 mins | - |
 | 2020-03-30 (Mon) | 24 | ~15 mins | Add |
 | 2020-03-29 (Sun) | 19 | ~15 mins | Add |
 | 2020-03-28 (Sat) | 17 | ~15 mins | Change |
