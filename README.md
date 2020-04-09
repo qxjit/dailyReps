@@ -2,7 +2,8 @@
 
 | Day | Reps | Time | Add / Remove / Change |
 |-|-|-|-|
-| 2020-04-08 (Tue) | 12 | ~5 mins | - |
+| 2020-04-09 (Thu) | 12 | ~5 mins | - |
+| 2020-04-08 (Wed) | 12 | ~5 mins | - |
 | 2020-04-07 (Tue) | 12 | ~5 mins | - |
 | 2020-04-06 (Mon) | 12 | ~10 mins | Add |
 | 2020-04-05 (Sun) | 11 | ~20 mins | Change |
