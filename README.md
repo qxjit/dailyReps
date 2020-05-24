@@ -2,7 +2,8 @@
 
 | Day | Reps | Time | Add / Remove / Change |
 |-|-|-|-|
-| 2020-05-23 (Fri) | 7 | ~15 mins | - |
+| 2020-05-24 (Sun) | 8 | ~10 mins | Add |
+| 2020-05-23 (Sat) | 7 | ~15 mins | - |
 | 2020-05-22 (Fri) | 14 | ~5 mins | - |
 | 2020-05-21 (Thu) | 14 | ~10 mins | - |
 | 2020-05-20 (Wed) | 14 | ~5 mins | - |
