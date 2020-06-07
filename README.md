@@ -2,6 +2,8 @@
 
 | Day | Reps | Time | Add / Remove / Change |
 |-|-|-|-|
+| 2020-06-07 (Sun) | 10 | ~15 minutes | Change |
+| 2020-06-06 (Sat) | None | - | - |
 | 2020-06-05 (Fri) | 9 | ~10 mins | - |
 | 2020-06-04 (Thu) | None | - | - |
 | 2020-06-03 (Wed) | None | - | - |
